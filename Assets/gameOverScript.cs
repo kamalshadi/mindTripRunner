@@ -5,12 +5,14 @@ using UnityEngine.SceneManagement;
 public class gameOverScript : MonoBehaviour {
 	AudioSource myaudio;
 	public KayaIsoLocomotion playerS;
+	private endSound es;
 	private AudioSource[] allAudioSources;
 	private bool fg =true;
 	private timeManager tm;
 	// Use this for initialization
 	void Start () {
 		tm = GameObject.Find ("TimeManager").GetComponent<timeManager> ();
+		es = GameObject.Find ("successPlatform").GetComponent<endSound> ();
 		myaudio = GetComponent<AudioSource>();
 	}
 	
@@ -21,7 +23,7 @@ public class gameOverScript : MonoBehaviour {
 			StopAllAudio ();
 			myaudio.Play ();
 		}
-		if (tm.timeLeft < .01 && fg) {
+		if (tm.timeLeft < .01 && fg && !es.winGame) {
 			fg = false;
 			StopAllAudio ();
 			myaudio.Play ();

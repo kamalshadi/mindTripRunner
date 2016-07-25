@@ -7,6 +7,7 @@ public class endSound : MonoBehaviour {
 	AudioSource myaudio;
 	private AudioSource[] allAudioSources;
 	private bool fg =true;
+	public bool winGame = false;
 	// Use this for initialization
 	void Start () {
 		myaudio = GetComponent<AudioSource>();
@@ -25,6 +26,7 @@ public class endSound : MonoBehaviour {
 			StopAllAudio ();
 			fg = false;
 			myaudio.Play ();
+			winGame = true;
 		}
 	}
 	void StopAllAudio() {
