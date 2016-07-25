@@ -136,14 +136,14 @@ public class KayaIsoLocomotion : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.C)|Input.GetButtonDown("Crouch"))
             crouch = !crouch;
 
-        //cam view loop using '<' / '>' keys or 'left bumper'/'right bumper' - mapped to RotateViewLeft/RotateViewRight button using 360 controller
-        if (Input.GetKeyDown(KeyCode.LeftArrow)|Input.GetButtonDown("RotateViewLeft"))
+		//cam view loop using '[' / ']' keys or 'left bumper'/'right bumper' - mapped to RotateViewLeft/RotateViewRight button using 360 controller
+		if (Input.GetKeyDown(KeyCode.LeftBracket)|Input.GetButtonDown("RotateViewLeft"))
         {         
             camIndex = camIndex-1;
             if (camIndex < 0)
                 camIndex = 3;
         }
-        if (Input.GetKeyDown(KeyCode.RightArrow)|Input.GetButtonDown("RotateViewRight"))
+		if (Input.GetKeyDown(KeyCode.RightBracket)|Input.GetButtonDown("RotateViewRight"))
         {
             camIndex = camIndex+1;
             if (camIndex > 3)
