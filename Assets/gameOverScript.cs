@@ -24,6 +24,7 @@ public class gameOverScript : MonoBehaviour {
 			myaudio.Play ();
 		}
 		if (tm.timeLeft < .01 && fg && !es.winGame) {
+			playerS.ragDoll = true;
 			fg = false;
 			StopAllAudio ();
 			myaudio.Play ();
