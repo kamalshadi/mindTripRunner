@@ -91,6 +91,6 @@ public class chase : MonoBehaviour {
                 chaseTimer = 0f;
             }
         }
-        this.tag = "Untagged";
+        //this.tag = "Untagged";
     }
 }
