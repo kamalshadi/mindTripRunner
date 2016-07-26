@@ -50,6 +50,9 @@ public class KayaIsoLocomotion : MonoBehaviour {
     private bool crouch = false;            //condition indication user has requested crouch
     private bool isGrounded = true;
 
+    public Transform bloodParticle;
+
+
     /*on screen debug
 	private Text directionText;
 	private Text speedText;
@@ -111,14 +114,20 @@ public class KayaIsoLocomotion : MonoBehaviour {
 
         //setup camera
         camIndex = 0;
+
+        //bloodParticle.GetComponent<ParticleSystem>().enableEmission = false;
     }
 		
 	void OnCollisionEnter(Collision other){
 
 		//check to see if collision is with an obstacle in the scene
 		if (other.gameObject.CompareTag ("Obstacle")) {
+            print("Hit Obstacle");
 			ragDoll = true;
-		}
+            //bloodParticle.Play();
+            //bloodParticle.GetComponent<ParticleSystem>().Stop();
+            bloodParticle.GetComponent<ParticleSystem>().Play();
+        }
 
 	}
 
@@ -192,8 +201,11 @@ public class KayaIsoLocomotion : MonoBehaviour {
 
         //ragdoll death if fall distance is large
         if (distToGround > maxFallDistance)
+        {
             ragDoll = true;
-
+            //bloodParticle.Play();
+            bloodParticle.GetComponent<ParticleSystem>().Play();
+        }
         //determine local relative player movement if ground conditions are okay
         move = Vector3.ProjectOnPlane (move, groundNormal);
         forward = move.z;
@@ -319,7 +331,12 @@ public class KayaIsoLocomotion : MonoBehaviour {
     public void setRagdoll()
     {
         if (!ragDoll)
+        {
             ragDoll = true;
+            //bloodParticle.enableEmission = true;
+            bloodParticle.GetComponent<ParticleSystem>().Play();
+        }
+            
     }
 
 	groundInfo playerGrounded(){
