@@ -12,7 +12,7 @@ public class loadMenue : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.M)) {
-			SceneManager.LoadScene (3);
+			SceneManager.LoadScene (0);
 		}
 	}
 }

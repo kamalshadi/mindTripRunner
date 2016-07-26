@@ -17,7 +17,7 @@ public class endSound : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (!fg && !myaudio.isPlaying) {
-			SceneManager.LoadScene(3);
+			SceneManager.LoadScene(0);
 		}
 	}
 
