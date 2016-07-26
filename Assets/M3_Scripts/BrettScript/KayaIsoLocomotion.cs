@@ -50,7 +50,10 @@ public class KayaIsoLocomotion : MonoBehaviour {
     private bool crouch = false;            //condition indication user has requested crouch
     private bool isGrounded = true;
 
-    /*on screen debug
+	public Transform bloodParticle;			//transform for blood particle system
+	public Transform footParticle;			//transform for jump dust system
+    
+	/*on screen debug
 	private Text directionText;
 	private Text speedText;
 	private Text moveText;
@@ -111,14 +114,16 @@ public class KayaIsoLocomotion : MonoBehaviour {
 
         //setup camera
         camIndex = 0;
+
     }
 		
 	void OnCollisionEnter(Collision other){
 
 		//check to see if collision is with an obstacle in the scene
 		if (other.gameObject.CompareTag ("Obstacle")) {
+            print("Hit Obstacle");
 			ragDoll = true;
-		}
+        }
 
 	}
 
@@ -192,8 +197,9 @@ public class KayaIsoLocomotion : MonoBehaviour {
 
         //ragdoll death if fall distance is large
         if (distToGround > maxFallDistance)
+        {
             ragDoll = true;
-
+        }
         //determine local relative player movement if ground conditions are okay
         move = Vector3.ProjectOnPlane (move, groundNormal);
         forward = move.z;
@@ -226,11 +232,11 @@ public class KayaIsoLocomotion : MonoBehaviour {
 		else {
 			anim.SetBool ("Pivot", false);
 		}
-
+			
 		anim.SetFloat ("Speed", s, 0.1f, Time.deltaTime);
-		anim.SetFloat("Direction", d, 0.1f, Time.deltaTime);
+		anim.SetFloat("Direction", d, 0.1f, Time.deltaTime);       
 
-        //crouch
+		//crouch
         if (crouch)
         {
             anim.SetBool("Crouch",true);
@@ -248,8 +254,12 @@ public class KayaIsoLocomotion : MonoBehaviour {
         if (isGrounded && currentBaseState.fullPathHash == moveAnimState)
         {
             if (jump)
-            {
-                anim.SetBool("Jump", true);
+			{
+				//play foot particle and sound when jumping
+				footParticle.GetComponent<ParticleSystem> ().Play ();
+				footParticle.GetComponent<AudioSource> ().Play ();
+
+				anim.SetBool("Jump", true);
                 //Vector3 jumpTarget = Vector3.Lerp(transform.position, transform.position + new Vector3(1,2,1) * jumpPower, jumpSmoothing);
                 //Debug.Log("position: " + transform.position);
                 //Debug.Log("jumpTarget: " + jumpTarget);
@@ -313,13 +323,17 @@ public class KayaIsoLocomotion : MonoBehaviour {
 
 		ragDoll = false;
 
+		bloodParticle.GetComponent<ParticleSystem>().Play ();
 		StartCoroutine (reloadScene ());
 	}
 
     public void setRagdoll()
     {
         if (!ragDoll)
+        {
             ragDoll = true;
+        }
+            
     }
 
 	groundInfo playerGrounded(){
