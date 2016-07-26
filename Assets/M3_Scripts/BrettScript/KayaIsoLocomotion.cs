@@ -255,9 +255,10 @@ public class KayaIsoLocomotion : MonoBehaviour {
         {
             if (jump)
 			{
-				//play foot particle when jumping
-				footParticle.GetComponent<ParticleSystem> ().Play ();  
-                
+				//play foot particle and sound when jumping
+				footParticle.GetComponent<ParticleSystem> ().Play ();
+				footParticle.GetComponent<AudioSource> ().Play ();
+
 				anim.SetBool("Jump", true);
                 //Vector3 jumpTarget = Vector3.Lerp(transform.position, transform.position + new Vector3(1,2,1) * jumpPower, jumpSmoothing);
                 //Debug.Log("position: " + transform.position);
