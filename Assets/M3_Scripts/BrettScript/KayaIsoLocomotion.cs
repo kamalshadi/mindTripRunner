@@ -313,13 +313,13 @@ public class KayaIsoLocomotion : MonoBehaviour {
 	//transition from anim to ragdoll physics
 	public void goForRagdoll(){
 
+		//disable animation controller
+		anim.enabled = false;
+
 		//set avatar Bones to non kinematic objects
 		foreach (Rigidbody bone in avatarBones) {
 			bone.isKinematic = false;
 		}
-
-		//disable animation controller
-		anim.enabled = false;
 
 		ragDoll = false;
 
