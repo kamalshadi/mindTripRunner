@@ -89,7 +89,7 @@ public class KayaIsoLocomotion : MonoBehaviour {
 			bone.isKinematic = true;
 		}
 
-		//reset player parent rigid body component to non kinematic and freez rotations
+		//reset player parent rigid body component to non kinematic and freeze rotations
 
 		kayaRB.isKinematic = false;
 		kayaRB.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
@@ -257,7 +257,7 @@ public class KayaIsoLocomotion : MonoBehaviour {
 			{
 				//play foot particle and sound when jumping
 				footParticle.GetComponent<ParticleSystem> ().Play ();
-				footParticle.GetComponent<AudioSource> ().Play ();
+				//footParticle.GetComponent<AudioSource> ().Play ();	//sound needs some work 
 
 				anim.SetBool("Jump", true);
                 //Vector3 jumpTarget = Vector3.Lerp(transform.position, transform.position + new Vector3(1,2,1) * jumpPower, jumpSmoothing);
