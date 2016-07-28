@@ -115,7 +115,7 @@ public bool onGround;
 	{
 		
 		kayaRB = GetComponent<Rigidbody> ();					//init player rigid body component\
-		kayaCollider = GetComponent<CapsuleCollider> ();			//init player collider
+		kayaCollider = GetComponent<CapsuleCollider> ();		//init player collider
 		anim = GetComponent<Animator> ();						//init player animation component
 		cam = Camera.main.transform;							//init main camera transform
 		isoCam = Camera.main.GetComponent<IsometricCamera> ();	//init isoCam component of main camera
@@ -191,13 +191,14 @@ public bool onGround;
 
 	void Update ()
 	{
+		currentBaseState = anim.GetCurrentAnimatorStateInfo (0); // set  currentState variable to the current state of the Base Layer of animation
 
 		if (!jump) {
 			
 			jump = Input.GetButtonDown ("Jump");
 
 			//play jump effects
-			if(jump)
+			if(jump && currentBaseState.fullPathHash == moveAnimState && !anim.IsInTransition(0))
 				Invoke("jumpEffects",0.1f);
 		
 		}			
@@ -381,6 +382,8 @@ public bool onGround;
 	//transition from anim to ragdoll physics
 	public void goForRagdoll ()
 	{
+		//set collider material to high friction material
+		kayaCollider.material = (PhysicMaterial)Resources.Load("PhysicMaterials/None");
 
 		//disable animation controller
 		anim.enabled = false;
