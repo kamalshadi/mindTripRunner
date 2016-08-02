@@ -16,6 +16,7 @@ public class chase : MonoBehaviour {
     private SphereCollider sphereCollider;                  //Sphere collider for the AI
     public bool playerInSight;                      // Whether or not the player is currently sighted.
     public bool playerOutofSight;                   // Whether player has left the NavMesh
+    public GameObject homePoint;
     // Use this for initialization
     void Start()
     {
@@ -33,65 +34,71 @@ public class chase : MonoBehaviour {
         direction.y = 0;
         float angle = Vector3.Angle(direction, head.up);
         RaycastHit hit, hit2;
-        if (playerOutofSight == false)
+        
+        if (playerOutofSight == false && Vector3.Distance(player.position, this.transform.position) < viewDistance && (angle < viewAngle || pursuing) && chaseTimer < chaseWaitTime && playerInSight)
         {
-            if (Vector3.Distance(player.position, this.transform.position) < viewDistance && (angle < viewAngle || pursuing) && chaseTimer < chaseWaitTime && playerInSight)
+            // ... and if a raycast towards the player hits something...
+            Physics.Raycast(transform.position + transform.up, direction.normalized, out hit, viewDistance);
+            Physics.Raycast(transform.position + (transform.up / 2), direction.normalized, out hit2, viewDistance);
+            // ... and if the raycast hits the player...
+            if (hit.collider.gameObject == playerObject || hit2.collider.gameObject == playerObject)
             {
-                // ... and if a raycast towards the player hits something...
-                Physics.Raycast(transform.position + transform.up, direction.normalized, out hit, viewDistance);
-                Physics.Raycast(transform.position + (transform.up / 2), direction.normalized, out hit2, viewDistance);
-                // ... and if the raycast hits the player...
-                if (hit.collider.gameObject == playerObject || hit2.collider.gameObject == playerObject)
+                pursuing = true;
+
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation,
+                                            Quaternion.LookRotation(direction), 0.1f);
+
+                anim.SetBool("isIdle", false);
+                if (direction.magnitude > stoppingDistance)
                 {
-                    pursuing = true;
-
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation,
-                                                Quaternion.LookRotation(direction), 0.1f);
-
-                    anim.SetBool("isIdle", false);
-                    if (direction.magnitude > stoppingDistance)
-                    {
-                        nav.Resume();
-                        nav.SetDestination(player.position);
-                        //this.transform.Translate(0, 0, 0.05f);
-                        anim.SetBool("isWalking", true);
-                        anim.SetBool("isAttacking", false);
-                    }
-                    else
-                    {
-                        Debug.Log("Attack!");
-                        this.tag = "Obstacle";
-                        nav.Stop();
-                        anim.SetBool("isAttacking", true);
-                        anim.SetBool("isWalking", false);
-                        chaseTimer = 0f;
-                    }
+                    nav.Resume();
+                    nav.SetDestination(player.position);
+                    //this.transform.Translate(0, 0, 0.05f);
+                    anim.SetBool("isWalking", true);
+                    anim.SetBool("isAttacking", false);
                 }
                 else
                 {
-                    chaseTimer += Time.deltaTime;
-                    nav.SetDestination(player.position);
+                    Debug.Log("Attack!");
+                    this.tag = "Obstacle";
+                    nav.Stop();
+                    anim.SetBool("isAttacking", true);
+                    anim.SetBool("isWalking", false);
+                    chaseTimer = 0f;
                 }
-
-
-
             }
             else
             {
                 chaseTimer += Time.deltaTime;
+                nav.SetDestination(player.position);
+                    
+            }
 
-                // If the timer exceeds the wait time...
-                if (chaseTimer >= chaseWaitTime)
+
+
+        }
+        else
+        {
+            chaseTimer += Time.deltaTime;
+
+            // If the timer exceeds the wait time...
+            if (chaseTimer >= chaseWaitTime)
+            {
+                nav.SetDestination(homePoint.transform.position);
+                float dist =nav.remainingDistance;
+                if (dist != Mathf.Infinity && nav.pathStatus == NavMeshPathStatus.PathComplete && nav.remainingDistance == 0)
                 {
                     nav.Stop();
                     anim.SetBool("isIdle", true);
                     anim.SetBool("isWalking", false);
                     anim.SetBool("isAttacking", false);
-                    pursuing = false;
-                    chaseTimer = 0f;
                 }
+                        
+                pursuing = false;
+                chaseTimer = 0f;
             }
         }
+        
         //this.tag = "Untagged";
     }
 
