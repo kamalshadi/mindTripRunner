@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class timePill : MonoBehaviour {
+	public GameObject popup;
 	private timeManager gameTimer;
 	AudioSource myaudio;
 	private GameObject mylight;
+	Text popuptext;
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +22,10 @@ public class timePill : MonoBehaviour {
 		}
 		myaudio.Play();
 		Destroy (this.gameObject);
+		GameObject A = Instantiate (popup);
+		popuptext = A.transform.GetChild(0).gameObject.GetComponent<Text> ();
+		popuptext.text = string.Concat("+" ,gameTimer.bonus.ToString ());
+		popuptext.color = Color.green;
 		Destroy (mylight);
 	}
 	// Update is called once per frame

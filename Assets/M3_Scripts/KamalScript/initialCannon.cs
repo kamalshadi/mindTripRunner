@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class initialCannon : MonoBehaviour {
+	public GameObject popup;
 	public float rotationSpeed;
 	public float fireSpeed;
 	public float fireTimeGap;
