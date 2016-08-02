@@ -73,7 +73,7 @@ public class KayaIsoLocomotion : MonoBehaviour
     
 	struct groundInfo
 	{
-public bool onGround;
+		public bool onGround;
 		public float distance;
 		public Vector3 landing;
 		public Vector3 normal;
@@ -82,14 +82,14 @@ public bool onGround;
 
 	private IsometricCamera isoCam;
 	private Transform cam;
-	private int camIndex;
-	//current view of the camera
+	private int camIndex;	//current view of the camera
 
 	private Rigidbody kayaRB;
 	private CapsuleCollider kayaCollider;
+	private PhysicMaterial startingMaterial;
+	public PhysicMaterial platformMaterial;	//high friction material to improve player interaction with moving platforms
 
-	public Component[] avatarBones;
-	//array of bone rigid bodies in player game object
+	public Component[] avatarBones; //array of bone rigid bodies in player game object
     
 	public bool ragDoll = false;
 	//condition to enable ragdoll simulation when colliding with game object tagged as obstacle
@@ -119,6 +119,7 @@ public bool onGround;
 		anim = GetComponent<Animator> ();						//init player animation component
 		cam = Camera.main.transform;							//init main camera transform
 		isoCam = Camera.main.GetComponent<IsometricCamera> ();	//init isoCam component of main camera
+		startingMaterial = kayaCollider.material;				//init starting capsule collider material
 	}
 
 	void Start ()
@@ -180,13 +181,30 @@ public bool onGround;
 
 	void OnCollisionEnter (Collision other)
 	{
-
 		//check to see if collision is with an obstacle in the scene
 		if (other.gameObject.CompareTag ("Obstacle")) {
 			print ("Hit Obstacle");
 			ragDoll = true;
 		}
 
+		//check to see if collision is with platform
+		if (other.gameObject.CompareTag ("Platform")) {
+
+			//change to high friction collider to improve sticking to platform
+			kayaCollider.material = platformMaterial;
+		
+		}
+
+	}
+
+	void OnCollisionExit(Collision other){
+
+		//when exiting platform return to low riction colloider
+		if (other.gameObject.CompareTag ("Platform")) {
+
+			kayaCollider.material = startingMaterial;
+
+		}	
 	}
 
 	void Update ()

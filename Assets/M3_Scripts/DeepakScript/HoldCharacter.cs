@@ -4,10 +4,12 @@ using System.Collections;
 public class HoldCharacter : MonoBehaviour {
 
     public GameObject player;
-    void OnTriggerEnter(Collider col)
+
+	void OnTriggerEnter(Collider col)
     {
-        player.transform.SetParent(gameObject.transform);
-    }
+		player.transform.SetParent(gameObject.transform);
+	
+	}
 
     void OnTriggerStay(Collider col)
     {
