@@ -13,6 +13,8 @@ public class chase : MonoBehaviour {
     private GameObject playerObject;                      // Reference to the player.
     private float chaseTimer = 0f;
     public float chaseWaitTime = 20f;
+    private SphereCollider sphereCollider;                  //Sphere collider for the AI
+    public bool playerInSight;                      // Whether or not the player is currently sighted.
     // Use this for initialization
     void Start()
     {
@@ -20,6 +22,7 @@ public class chase : MonoBehaviour {
         nav = GetComponent<NavMeshAgent>();
         playerObject = GameObject.FindGameObjectWithTag("Player");
         this.tag = "Untagged";
+        sphereCollider = GetComponent<SphereCollider>();
     }
 
     // Update is called once per frame
@@ -27,45 +30,37 @@ public class chase : MonoBehaviour {
         Vector3 direction = player.position - this.transform.position;
         direction.y = 0;
         float angle = Vector3.Angle(direction, head.up);
-        RaycastHit hit;
-        if (Vector3.Distance(player.position, this.transform.position) < viewDistance && (angle < viewAngle || pursuing) && chaseTimer < chaseWaitTime)
+        RaycastHit hit, hit2;
+        if (Vector3.Distance(player.position, this.transform.position) < viewDistance && (angle < viewAngle || pursuing) && chaseTimer < chaseWaitTime && playerInSight)
         {
-            
-
             // ... and if a raycast towards the player hits something...
-            if (Physics.Raycast(transform.position + transform.up, direction.normalized, out hit, viewDistance))
+            Physics.Raycast(transform.position + transform.up, direction.normalized, out hit, viewDistance);
+            Physics.Raycast(transform.position + (transform.up / 2), direction.normalized, out hit2, viewDistance);
+            // ... and if the raycast hits the player...
+            if (hit.collider.gameObject == playerObject || hit2.collider.gameObject == playerObject)
             {
-                // ... and if the raycast hits the player...
-                if (hit.collider.gameObject == playerObject)
+                pursuing = true;
+
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation,
+                                            Quaternion.LookRotation(direction), 0.1f);
+
+                anim.SetBool("isIdle", false);
+                if (direction.magnitude > stoppingDistance)
                 {
-                    pursuing = true;
-
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation,
-                                                Quaternion.LookRotation(direction), 0.1f);
-
-                    anim.SetBool("isIdle", false);
-                    if (direction.magnitude > stoppingDistance)
-                    {
-                        nav.Resume();
-                        nav.SetDestination(player.position);
-                        //this.transform.Translate(0, 0, 0.05f);
-                        anim.SetBool("isWalking", true);
-                        anim.SetBool("isAttacking", false);
-                    }
-                    else
-                    {
-                        Debug.Log("Attack!");
-                        this.tag = "Obstacle";
-                        nav.Stop();
-                        anim.SetBool("isAttacking", true);
-                        anim.SetBool("isWalking", false);
-						chaseTimer = 0f;
-                    }
+                    nav.Resume();
+                    nav.SetDestination(player.position);
+                    //this.transform.Translate(0, 0, 0.05f);
+                    anim.SetBool("isWalking", true);
+                    anim.SetBool("isAttacking", false);
                 }
                 else
                 {
-                    chaseTimer += Time.deltaTime;
-                    nav.SetDestination(player.position);
+                    Debug.Log("Attack!");
+                    this.tag = "Obstacle";
+                    nav.Stop();
+                    anim.SetBool("isAttacking", true);
+                    anim.SetBool("isWalking", false);
+					chaseTimer = 0f;
                 }
             }
             else
@@ -73,6 +68,7 @@ public class chase : MonoBehaviour {
                 chaseTimer += Time.deltaTime;
                 nav.SetDestination(player.position);
             }
+           
                 
 
         }
@@ -93,4 +89,28 @@ public class chase : MonoBehaviour {
         }
         //this.tag = "Untagged";
     }
+
+    void OnTriggerStay(Collider other)
+    {
+        // If the player has entered the trigger sphere...
+        if (other.gameObject == playerObject)
+        {
+            // By default the player is not in sight.
+            playerInSight = true;
+
+            
+           
+        }
+    }
+
+
+    void OnTriggerExit(Collider other)
+    {
+        // If the player leaves the trigger zone...
+        if (other.gameObject == playerObject)
+            // ... the player is not in sight.
+            playerInSight = false;
+    }
+
+
 }
