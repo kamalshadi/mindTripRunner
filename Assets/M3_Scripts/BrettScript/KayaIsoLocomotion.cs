@@ -99,10 +99,15 @@ public class KayaIsoLocomotion : MonoBehaviour
 	//condition indication user has requested crouch
 	private bool isGrounded = true;
 	//transform for blood particle system
+
+	//controller polish efx
 	public Transform bloodParticle;
 	//transform for jump dust system
 	public Transform footParticle;
-    
+	//ragdoll sound
+	private AudioSource wilhelmDeath;
+	private bool deathScream;
+
 	/*on screen debug
 	private Text directionText;
 	private Text speedText;
@@ -120,6 +125,7 @@ public class KayaIsoLocomotion : MonoBehaviour
 		cam = Camera.main.transform;							//init main camera transform
 		isoCam = Camera.main.GetComponent<IsometricCamera> ();	//init isoCam component of main camera
 		startingMaterial = kayaCollider.material;				//init starting capsule collider material
+		wilhelmDeath = GetComponent<AudioSource>();
 	}
 
 	void Start ()
@@ -177,6 +183,9 @@ public class KayaIsoLocomotion : MonoBehaviour
 		//setup camera
 		camIndex = 0;
 
+		//set deathScream to false
+		deathScream = false;
+
 	}
 
 	void OnCollisionEnter (Collision other)
@@ -222,7 +231,7 @@ public class KayaIsoLocomotion : MonoBehaviour
 		}			
 
 		if (ragDoll)
-			Invoke ("goForRagdoll", timeToRagdoll);
+			Invoke ("goForRagdoll", timeToRagdoll);					
 
 		if (Input.GetKeyDown (KeyCode.C) | Input.GetButtonDown ("Crouch"))
 			crouch = !crouch;
@@ -400,6 +409,8 @@ public class KayaIsoLocomotion : MonoBehaviour
 	//transition from anim to ragdoll physics
 	public void goForRagdoll ()
 	{
+		bool deathSound = false;
+
 		//set collider material to high friction material
 		kayaCollider.material = (PhysicMaterial)Resources.Load("PhysicMaterials/None");
 
@@ -412,6 +423,13 @@ public class KayaIsoLocomotion : MonoBehaviour
 		}
 
 		ragDoll = false;
+
+		//ragdoll effects
+		if (!deathScream) {
+
+			wilhelmDeath.Play ();
+			deathScream = true;
+		}
 
 		bloodParticle.GetComponent<ParticleSystem> ().Play ();
 		StartCoroutine (reloadScene ());
