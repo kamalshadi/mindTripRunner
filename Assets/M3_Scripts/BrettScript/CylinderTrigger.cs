@@ -42,7 +42,7 @@ public class CylinderTrigger : MonoBehaviour {
 				cyl.tag = "Obstacle";
 			}
 			Invoke ("changeCylinderTag", 3.0f);
-			Destroy (cylinder, 6.0f);
+			//Destroy (cylinder, 6.0f);
 				
 			//cylinderAudio.Play ();
 			//cylinder.tag = "Obstacle";
@@ -59,6 +59,9 @@ public class CylinderTrigger : MonoBehaviour {
 
 		foreach (Rigidbody cyl in cylinderRb)
 			cyl.tag = "Untagged";
+
+		foreach (AudioSource aud in cylinderAudio)
+			aud.Stop();
 	}
 		
 }
