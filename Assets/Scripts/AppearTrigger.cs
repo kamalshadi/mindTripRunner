@@ -19,5 +19,10 @@ public class AppearTrigger : MonoBehaviour {
         this.transform.GetComponent<Renderer>().material = highlightColor;
         swPlatAppear.platformAppear = true;
     }
-    
+
+    void OnTriggerExit(Collider col)
+    {
+        this.transform.GetComponent<Renderer>().material = mainColor;
+    }
+
 }
