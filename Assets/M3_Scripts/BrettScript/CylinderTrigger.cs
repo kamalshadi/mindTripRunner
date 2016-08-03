@@ -32,13 +32,17 @@ public class CylinderTrigger : MonoBehaviour {
 		
 			//Debug.Log("apply a force to roll the cylinder");
 			foreach (Rigidbody cyl in cylinderRb) {
+
 				cyl.isKinematic = false;
 				cyl.AddForce (cylinderThrust);
+
 				foreach (AudioSource aud in cylinderAudio)
 					aud.Play ();
+
 				cyl.tag = "Obstacle";
-				Destroy (cylinder, 6.0f);
 			}
+			Invoke ("changeCylinderTag", 3.0f);
+			//Destroy (cylinder, 6.0f);
 				
 			//cylinderAudio.Play ();
 			//cylinder.tag = "Obstacle";
@@ -50,4 +54,14 @@ public class CylinderTrigger : MonoBehaviour {
 
 		}
 	}
+
+	void changeCylinderTag(){
+
+		foreach (Rigidbody cyl in cylinderRb)
+			cyl.tag = "Untagged";
+
+		foreach (AudioSource aud in cylinderAudio)
+			aud.Stop();
+	}
+		
 }
